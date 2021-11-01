@@ -2,8 +2,8 @@ Vagrant.configure("2") do |config|
     config.vm.box = "debian/bullseye64"
     config.vm.box_version = "11.20210829.1"
     config.vm.provider "virtualbox" do |vb|
-        vb.memory = "2048"
-        vb.cpus = "2"
+        vb.memory = "2500"
+        vb.cpus = "4"
     end
 
     config.vm.provision "shell", inline: "swapoff -a"
@@ -11,6 +11,13 @@ Vagrant.configure("2") do |config|
     config.vm.provision "apt-get update", type: "shell", inline: <<-SCRIPT
 echo "apt-get update"
 apt-get update
+SCRIPT
+
+    config.vm.provision "rust", type: "shell", inline: <<-SCRIPT
+echo "Installing Rust"
+apt-get install -y build-essential pkg-config libssl-dev curl
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sudo -u vagrant sh -s -- -y
+sudo -u vagrant export CARGO_TARGET_DIR=../home/vagrant/cargo
 SCRIPT
 
     config.vm.provision "lvm2", type: "shell", inline: <<-SCRIPT
@@ -74,6 +81,7 @@ parameters:
   storage: "lvm"
   volgroup: "lvmvg"
 provisioner: local.csi.openebs.io
+volumeBindingMode: WaitForFirstConsumer
 EOF
 SCRIPT
 
