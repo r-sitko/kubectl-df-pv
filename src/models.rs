@@ -1,8 +1,9 @@
-use serde::{Deserialize};
+use serde::Deserialize;
 
 #[derive(Debug, Deserialize)]
 pub struct Summary {
-    pub pods: Vec<PodStats>,
+    #[serde(rename = "pods")]
+    pub pods_stats: Vec<PodStats>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -50,4 +51,16 @@ pub struct FsStats {
 pub struct PVCReference {
     pub name: String,
     pub namespace: String,
+}
+
+#[derive(Debug, Clone)]
+pub struct PVStats {
+    pub pvc_name: String,
+    pub pod_namespace: String,
+    pub pod_name: String,
+    pub capacity_bytes: u64,
+    pub used_bytes: u64,
+    pub inodes_free: u64,
+    pub inodes: u64,
+    pub inodes_used: u64,
 }
