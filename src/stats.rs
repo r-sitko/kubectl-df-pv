@@ -52,7 +52,7 @@ impl PVStatsCollector {
         Ok(res)
     }
 
-    fn build_pvs_stats(summaries: &Vec<Summary>) -> Vec<PVStats> {
+    fn build_pvs_stats(summaries: &[Summary]) -> Vec<PVStats> {
         summaries
             .iter()
             .map(|summary| &summary.pods_stats)

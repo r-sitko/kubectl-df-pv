@@ -5,7 +5,7 @@ use std::cell::RefCell;
 use std::io::Write;
 
 pub trait OutputFormatter {
-    fn format(&self, pvs_stats: &Vec<PVStats>) -> String;
+    fn format(&self, pvs_stats: &[PVStats]) -> String;
 }
 
 pub struct OutputGenerator<S: OutputFormatter, W: Write> {
@@ -21,7 +21,7 @@ impl<S: OutputFormatter, W: Write> OutputGenerator<S, W> {
         }
     }
 
-    pub fn generate(&self, pvs_stats: &Vec<PVStats>) -> std::io::Result<()> {
+    pub fn generate(&self, pvs_stats: &[PVStats]) -> std::io::Result<()> {
         let formatted_output = self.strategy.format(pvs_stats);
         self.writer
             .borrow_mut()
@@ -32,7 +32,7 @@ impl<S: OutputFormatter, W: Write> OutputGenerator<S, W> {
 pub struct PrettyTable;
 
 impl OutputFormatter for PrettyTable {
-    fn format(&self, pvs_stats: &Vec<PVStats>) -> String {
+    fn format(&self, pvs_stats: &[PVStats]) -> String {
         let mut table = Table::new();
         table
             .set_header(vec![
@@ -61,7 +61,7 @@ impl OutputFormatter for PrettyTable {
         }
 
         let mut output = table.to_string();
-        output.push_str("\n");
+        output.push('\n');
         output
     }
 }

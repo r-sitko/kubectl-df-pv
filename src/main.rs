@@ -5,8 +5,6 @@ mod stats;
 use crate::output::{OutputGenerator, PrettyTable};
 use crate::stats::PVStatsCollector;
 
-use tokio;
-
 // kubectl get --raw /api/v1/nodes/minikube/proxy/stats/summary
 // kubectl get --raw /api/v1/nodes/minikube-m02/proxy/stats/summary
 
