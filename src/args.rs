@@ -11,7 +11,6 @@ pub enum Format {
 }
 
 #[derive(StructOpt, Debug)]
-#[structopt(name = "basic")]
 pub struct ApplicationArgs {
     #[structopt(short, long, possible_values = Format::VARIANTS, case_insensitive = true, default_value = DEFAULT_FORMAT)]
     pub format: Format,

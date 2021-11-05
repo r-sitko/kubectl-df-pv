@@ -1,9 +1,9 @@
-mod cli;
+mod args;
 mod models;
 mod output;
 mod stats;
 
-use crate::cli::{ApplicationArgs, Format};
+use crate::args::{ApplicationArgs, Format};
 use crate::output::{JsonOutputFormatter, OutputGenerator, PrettyTableOutputFormatter};
 use crate::stats::PVStatsCollector;
 use structopt::StructOpt;
