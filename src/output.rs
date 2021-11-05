@@ -29,9 +29,9 @@ impl<S: OutputFormatter, W: Write> OutputGenerator<S, W> {
     }
 }
 
-pub struct PrettyTable;
+pub struct PrettyTableOutputFormatter;
 
-impl OutputFormatter for PrettyTable {
+impl OutputFormatter for PrettyTableOutputFormatter {
     fn format(&self, pvs_stats: &[PVStats]) -> String {
         let mut table = Table::new();
         table
@@ -63,5 +63,13 @@ impl OutputFormatter for PrettyTable {
         let mut output = table.to_string();
         output.push('\n');
         output
+    }
+}
+
+pub struct JsonOutputFormatter;
+
+impl OutputFormatter for JsonOutputFormatter {
+    fn format(&self, pvs_stats: &[PVStats]) -> String {
+        serde_json::to_string(pvs_stats).unwrap()
     }
 }

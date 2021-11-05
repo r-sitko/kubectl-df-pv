@@ -1,4 +1,4 @@
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize)]
 pub struct Summary {
@@ -53,7 +53,7 @@ pub struct PVCReference {
     pub namespace: String,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize)]
 pub struct PVStats {
     pub pvc_name: String,
     pub pod_namespace: String,
