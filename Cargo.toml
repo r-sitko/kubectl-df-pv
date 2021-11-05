@@ -14,3 +14,4 @@ serde_json = { version = "1.0.61", features = ["raw_value"] }
 futures = "0.3.17"
 structopt = "0.3.25"
 comfy-table = "4.1.1"
+strum = { version = "0.22", features = ["derive"] }
