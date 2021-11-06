@@ -1,8 +1,8 @@
-use structopt::StructOpt;
-use strum::{EnumString, EnumVariantNames, VariantNames, IntoStaticStr};
 use lazy_static::lazy_static;
+use structopt::StructOpt;
+use strum::{EnumString, EnumVariantNames, IntoStaticStr, VariantNames};
 
-lazy_static!{
+lazy_static! {
     static ref DEFAULT_FORMAT: &'static str = Format::Table.into();
 }
 
