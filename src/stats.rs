@@ -63,7 +63,6 @@ impl PVStatsCollector {
             .context("Failed to get an instance of subresource")?;
         let res = self
             .client
-            .clone()
             .request::<Summary>(req)
             .await
             .with_context(|| {
