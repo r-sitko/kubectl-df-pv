@@ -1,11 +1,12 @@
 use crate::models::PVStats;
+use anyhow::{Context, Result};
 use comfy_table::presets::NOTHING;
 use comfy_table::{Cell, Table};
 use std::cell::RefCell;
 use std::io::Write;
 
 pub trait OutputFormatter {
-    fn format(&self, pvs_stats: &[PVStats]) -> String;
+    fn format(&self, pvs_stats: &[PVStats]) -> Result<String>;
 }
 
 pub struct OutputGenerator<S: OutputFormatter, W: Write> {
@@ -21,18 +22,22 @@ impl<S: OutputFormatter, W: Write> OutputGenerator<S, W> {
         }
     }
 
-    pub fn generate(&self, pvs_stats: &[PVStats]) -> std::io::Result<()> {
-        let formatted_output = self.strategy.format(pvs_stats);
+    pub fn generate(&self, pvs_stats: &[PVStats]) -> Result<()> {
+        let formatted_output = self
+            .strategy
+            .format(pvs_stats)
+            .context("Failed to format output")?;
         self.writer
             .borrow_mut()
             .write_all(formatted_output.as_bytes())
+            .context("Failed write_all data")
     }
 }
 
 pub struct PrettyTableOutputFormatter;
 
 impl OutputFormatter for PrettyTableOutputFormatter {
-    fn format(&self, pvs_stats: &[PVStats]) -> String {
+    fn format(&self, pvs_stats: &[PVStats]) -> Result<String> {
         let mut table = Table::new();
         table
             .set_header(vec![
@@ -62,14 +67,14 @@ impl OutputFormatter for PrettyTableOutputFormatter {
 
         let mut output = table.to_string();
         output.push('\n');
-        output
+        Ok(output)
     }
 }
 
 pub struct JsonOutputFormatter;
 
 impl OutputFormatter for JsonOutputFormatter {
-    fn format(&self, pvs_stats: &[PVStats]) -> String {
-        serde_json::to_string(pvs_stats).unwrap()
+    fn format(&self, pvs_stats: &[PVStats]) -> Result<String> {
+        serde_json::to_string(pvs_stats).context("Failed serialize PVs statistics to JSON")
     }
 }

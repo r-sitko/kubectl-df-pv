@@ -16,3 +16,4 @@ structopt = "0.3.25"
 comfy-table = "4.1.1"
 strum = { version = "0.22", features = ["derive"] }
 lazy_static = "1.4.0"
+anyhow = "1.0.45"

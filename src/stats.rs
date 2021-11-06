@@ -1,5 +1,6 @@
 use crate::models::PVStats;
 use crate::models::Summary;
+use anyhow::{Context, Result};
 use futures::future::join_all;
 use k8s_openapi::api::core::v1::Node;
 use kube::core::Resource;
@@ -13,16 +14,18 @@ pub struct PVStatsCollector {
 }
 
 impl PVStatsCollector {
-    pub async fn new() -> Result<Self, kube::Error> {
-        let client = Client::try_default().await?;
+    pub async fn new() -> Result<Self> {
+        let client = Client::try_default()
+            .await
+            .context("Failed to create K8S client")?;
         Ok(PVStatsCollector { client })
     }
 
-    pub async fn get_pvs_stats(
-        &self,
-        namespace: Option<&str>,
-    ) -> Result<Vec<PVStats>, kube::Error> {
-        let nodes = self.get_all_nodes().await?;
+    pub async fn get_pvs_stats(&self, namespace: Option<&str>) -> Result<Vec<PVStats>> {
+        let nodes = self
+            .get_all_nodes()
+            .await
+            .context("Failed to get Kubernetes nodes")?;
 
         let mut futures = Vec::new();
 
@@ -33,8 +36,8 @@ impl PVStatsCollector {
         let nodes_summaries: Vec<Summary> = join_all(futures)
             .await
             .into_iter()
-            .collect::<Result<Vec<Summary>, kube::Error>>()
-            .unwrap();
+            .collect::<Result<Vec<Summary>>>()
+            .context("Failed to get Summary result from Kubernetes")?;
 
         let mut pvs_stats = Self::build_pvs_stats(&nodes_summaries);
 
@@ -45,17 +48,30 @@ impl PVStatsCollector {
         Ok(pvs_stats)
     }
 
-    async fn get_all_nodes(&self) -> Result<ObjectList<Node>, kube::Error> {
+    async fn get_all_nodes(&self) -> Result<ObjectList<Node>> {
         let nodes_api: Api<Node> = Api::all(self.client.clone());
-        nodes_api.list(&ListParams::default()).await
+        nodes_api
+            .list(&ListParams::default())
+            .await
+            .context("Failed to list nodes")
     }
 
-    async fn get_node_summary(&self, node_name: String) -> Result<Summary, kube::Error> {
+    async fn get_node_summary(&self, node_name: String) -> Result<Summary> {
         let node_url = Node::url_path(&(), None);
         let req = Request::new(node_url)
             .get_subresource("proxy/stats/summary", &node_name)
-            .unwrap();
-        let res = self.client.clone().request::<Summary>(req).await?;
+            .context("Failed to get an instance of subresource")?;
+        let res = self
+            .client
+            .clone()
+            .request::<Summary>(req)
+            .await
+            .with_context(|| {
+                format!(
+                    "Failed to get Summary result from Kubernetes node {}",
+                    node_name
+                )
+            })?;
         Ok(res)
     }
 
