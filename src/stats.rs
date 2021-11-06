@@ -61,16 +61,12 @@ impl PVStatsCollector {
         let req = Request::new(node_url)
             .get_subresource("proxy/stats/summary", &node_name)
             .context("Failed to get an instance of subresource")?;
-        let res = self
-            .client
-            .request::<Summary>(req)
-            .await
-            .with_context(|| {
-                format!(
-                    "Failed to get Summary result from Kubernetes node {}",
-                    node_name
-                )
-            })?;
+        let res = self.client.request::<Summary>(req).await.with_context(|| {
+            format!(
+                "Failed to get Summary result from Kubernetes node {}",
+                node_name
+            )
+        })?;
         Ok(res)
     }
 
