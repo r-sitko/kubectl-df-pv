@@ -16,7 +16,9 @@ async fn main() -> Result<(), kube::Error> {
     let app_args = ApplicationArgs::from_args();
 
     let pv_stats_collector = PVStatsCollector::new().await?;
-    let pvs_stats = pv_stats_collector.get_pvs_stats().await?;
+    let pvs_stats = pv_stats_collector
+        .get_pvs_stats(app_args.namespace.as_deref())
+        .await?;
 
     match app_args.format {
         Format::Table => {

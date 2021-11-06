@@ -18,7 +18,10 @@ impl PVStatsCollector {
         Ok(PVStatsCollector { client })
     }
 
-    pub async fn get_pvs_stats(&self) -> Result<Vec<PVStats>, kube::Error> {
+    pub async fn get_pvs_stats(
+        &self,
+        namespace: Option<&str>,
+    ) -> Result<Vec<PVStats>, kube::Error> {
         let nodes = self.get_all_nodes().await?;
 
         let mut futures = Vec::new();
@@ -33,7 +36,11 @@ impl PVStatsCollector {
             .collect::<Result<Vec<Summary>, kube::Error>>()
             .unwrap();
 
-        let pvs_stats = Self::build_pvs_stats(&nodes_summaries);
+        let mut pvs_stats = Self::build_pvs_stats(&nodes_summaries);
+
+        if let Some(namespace) = namespace {
+            pvs_stats = Self::filter_pvs_stats_by_namespace(pvs_stats, namespace);
+        }
 
         Ok(pvs_stats)
     }
@@ -77,6 +84,13 @@ impl PVStatsCollector {
                         })
                     })
             })
+            .collect()
+    }
+
+    fn filter_pvs_stats_by_namespace(pvs_stats: Vec<PVStats>, namespace: &str) -> Vec<PVStats> {
+        pvs_stats
+            .into_iter()
+            .filter(|stats| stats.pod_namespace == namespace)
             .collect()
     }
 }

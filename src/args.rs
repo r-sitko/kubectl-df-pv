@@ -17,4 +17,6 @@ pub enum Format {
 pub struct ApplicationArgs {
     #[structopt(short, long, possible_values = Format::VARIANTS, case_insensitive = true, default_value = &DEFAULT_FORMAT)]
     pub format: Format,
+    #[structopt(short, long)]
+    pub namespace: Option<String>,
 }

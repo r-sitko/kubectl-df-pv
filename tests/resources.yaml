@@ -1,7 +1,13 @@
 apiVersion: v1
+kind: Namespace
+metadata:
+  name: test-pod-namespace
+---
+apiVersion: v1
 kind: Pod
 metadata:
   name: test-pod
+  namespace: test-pod-namespace
 spec:
   restartPolicy: Never
   containers:
@@ -46,6 +52,7 @@ kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
   name: test-pvc
+  namespace: test-pod-namespace
 spec:
   storageClassName: openebs-lvmpv
   accessModes:
