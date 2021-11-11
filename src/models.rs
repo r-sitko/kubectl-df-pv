@@ -11,7 +11,7 @@ pub struct PodStats {
     #[serde(rename = "podRef")]
     pub pod_ref: PodReference,
     #[serde(rename = "volume")]
-    pub volume_stats: Option<Vec<VolumeStats>>,
+    pub volumes_stats: Option<Vec<VolumeStats>>,
 }
 
 #[derive(Debug, Deserialize)]

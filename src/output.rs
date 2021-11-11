@@ -1,9 +1,7 @@
 use crate::models::PVStats;
 use anyhow::{Context, Result};
-use comfy_table::presets::NOTHING;
-use comfy_table::{Cell, Table};
-use std::cell::RefCell;
-use std::io::Write;
+use comfy_table::{presets::NOTHING, Cell, Table};
+use std::{cell::RefCell, io::Write};
 
 pub trait OutputFormatter {
     fn format(&self, pvs_stats: &[PVStats]) -> Result<String>;
