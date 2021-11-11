@@ -7,6 +7,7 @@ use kube::{
     core::Resource,
     Client, ResourceExt,
 };
+use ubyte::ToByteUnit;
 
 pub struct SummaryCollector {
     client: Client,
@@ -85,8 +86,8 @@ impl SummaryConverter {
                                 pvc_name: volume_stats.pvc_ref.as_ref().unwrap().name.clone(),
                                 pod_namespace: pod_stats.pod_ref.namespace.clone(),
                                 pod_name: pod_stats.pod_ref.name.clone(),
-                                capacity_bytes: volume_stats.fs_stats.capacity_bytes,
-                                used_bytes: volume_stats.fs_stats.used_bytes,
+                                capacity_bytes: volume_stats.fs_stats.capacity_bytes.bytes(),
+                                used_bytes: volume_stats.fs_stats.used_bytes.bytes(),
                                 inodes_free: volume_stats.fs_stats.inodes_free,
                                 inodes: volume_stats.fs_stats.inodes,
                                 inodes_used: volume_stats.fs_stats.inodes_used,

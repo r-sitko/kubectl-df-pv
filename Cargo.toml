@@ -17,3 +17,4 @@ comfy-table = "4.1.1"
 strum = { version = "0.22", features = ["derive"] }
 lazy_static = "1.4.0"
 anyhow = "1.0.45"
+ubyte = { version = "0.10.1", features = ["serde"] }
